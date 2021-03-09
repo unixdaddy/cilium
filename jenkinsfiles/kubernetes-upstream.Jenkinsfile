@@ -13,6 +13,7 @@ pipeline {
         KERNEL="419"
         SERVER_BOX = "cilium/ubuntu-4-19"
         CNI_INTEGRATION=setIfLabel("integration/cni-flannel", "FLANNEL", "")
+        HOME="${WORKSPACE}"
     }
 
     options {
@@ -85,7 +86,7 @@ pipeline {
             }
 
             steps {
-                sh 'cd ${TESTDIR}; vagrant ssh k8s1-${K8S_VERSION} -c "cd /home/vagrant/go/${PROJ_PATH}; ./test/kubernetes-test.sh ${DOCKER_TAG}"'
+                sh 'cd ${TESTDIR}; vagrant ssh k8s1-${K8S_VERSION} -c "cd ${HOME}/go/${PROJ_PATH}; ./test/kubernetes-test.sh ${DOCKER_TAG}"'
             }
         }
 
@@ -107,7 +108,7 @@ pipeline {
             steps {
                 sh '''
                     cd ${TESTDIR}; vagrant ssh k8s1-${K8S_VERSION} -c "
-                        cd /home/vagrant/go/${PROJ_PATH}/test;
+                        cd ${HOME}/go/${PROJ_PATH}/test;
                         ./kubernetes-netperftest.sh '$PROMETHEUS_URL' '$PROMETHEUS_USR' '$PROMETHEUS_PSW'"
                 '''
             }
